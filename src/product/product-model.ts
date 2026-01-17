@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ProductDocument } from "./product-types";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const attributeValueSchema = new mongoose.Schema({
     name: {
@@ -57,4 +57,5 @@ const productSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
-export default mongoose.model<ProductDocument>("Product", productSchema);
+productSchema.plugin(aggregatePaginate);
+export default mongoose.model("Product", productSchema);

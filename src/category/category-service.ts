@@ -8,7 +8,7 @@ export class CategoryService {
         return newCategory.save();
     }
 
-    // Get one category data
+    // Get one category data by ID
     async getOne(categoryId: string) {
         return await CategoryModel.findOne({ _id: categoryId });
     }
@@ -23,5 +23,10 @@ export class CategoryService {
             { $set: updateData },
             { new: true },
         );
+    }
+
+    // Get all Category data
+    async getAll() {
+        return await CategoryModel.find();
     }
 }

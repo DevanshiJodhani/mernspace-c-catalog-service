@@ -32,4 +32,6 @@ router.patch(
 
 router.get("/:categoryId", asyncWrapper(categoryController.getOne));
 
+router.get("/", asyncWrapper(categoryController.getAll));
+
 export default router;

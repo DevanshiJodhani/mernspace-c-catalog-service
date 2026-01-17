@@ -13,6 +13,7 @@ export class CategoryController {
         this.create = this.create.bind(this);
         this.update = this.update.bind(this);
         this.getOne = this.getOne.bind(this);
+        this.getAll = this.getAll.bind(this);
     }
 
     // Create category
@@ -101,6 +102,17 @@ export class CategoryController {
 
         res.json({
             category,
+        });
+    }
+
+    // Fetch all category data
+    async getAll(req: Request, res: Response) {
+        const categories = await this.categoryService.getAll();
+
+        this.logger.info(`Fetch all categories data`);
+
+        res.json({
+            categories,
         });
     }
 }

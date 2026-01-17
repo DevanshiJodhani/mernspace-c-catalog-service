@@ -30,8 +30,15 @@ router.patch(
     asyncWrapper(categoryController.update),
 );
 
-router.get("/:categoryId", asyncWrapper(categoryController.getOne));
+router.get("/:id", asyncWrapper(categoryController.getOne));
 
 router.get("/", asyncWrapper(categoryController.getAll));
+
+router.delete(
+    "/:id",
+    authenticate,
+    canAccess([Roles.ADMIN]),
+    asyncWrapper(categoryController.delete),
+);
 
 export default router;

@@ -14,6 +14,7 @@ export class CategoryController {
         this.update = this.update.bind(this);
         this.getOne = this.getOne.bind(this);
         this.getAll = this.getAll.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
     // Create category
@@ -90,9 +91,9 @@ export class CategoryController {
 
     // Fetch one category data by ID
     async getOne(req: Request, res: Response, next: NextFunction) {
-        const { categoryId } = req.params;
+        const { id } = req.params;
 
-        const category = await this.categoryService.getOne(categoryId);
+        const category = await this.categoryService.getOne(id);
 
         if (!category) {
             return next(createHttpError(404, "Category not found"));
@@ -113,6 +114,27 @@ export class CategoryController {
 
         res.json({
             categories,
+        });
+    }
+
+    // Delete category
+    async delete(req: Request, res: Response, next: NextFunction) {
+        const { id } = req.params;
+
+        // Check if category exists
+        const existingCategory = await this.categoryService.getOne(id);
+
+        if (!existingCategory) {
+            return next(createHttpError(404, "Category with this IDnot found"));
+        }
+
+        await this.categoryService.delete(id);
+
+        this.logger.info(`Deleted category`, { id });
+
+        res.json({
+            message: "Category deleted successfully",
+            id,
         });
     }
 }

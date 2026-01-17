@@ -10,11 +10,13 @@ import { UploadedFile } from "express-fileupload";
 import { AuthRequest } from "../common/types";
 import { Roles } from "../common/constants";
 import mongoose from "mongoose";
+import { Logger } from "winston";
 
 export class ProductController {
     constructor(
         private productService: ProductService,
         private storage: FileStorage,
+        private logger: Logger,
     ) {}
 
     // Create Product
@@ -59,6 +61,8 @@ export class ProductController {
         const newProduct = await this.productService.createProduct(
             product as unknown as Product,
         );
+
+        this.logger.info("Product Created", { id: newProduct._id });
 
         res.json({
             id: newProduct._id,
@@ -135,6 +139,8 @@ export class ProductController {
 
         await this.productService.updateProduct(productId, productToUpdate);
 
+        this.logger.info("Product updated", { id: productId });
+
         res.json({
             message: "Product updated successfully",
             id: productId,
@@ -166,6 +172,8 @@ export class ProductController {
             q as string,
             filters,
         );
+
+        this.logger.info("Fetched products list");
 
         res.json(products);
     };

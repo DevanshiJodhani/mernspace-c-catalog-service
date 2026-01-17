@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ProductDocument } from "./product-types";
 
 const attributeValueSchema = new mongoose.Schema({
     name: {
@@ -56,4 +57,4 @@ const productSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model<ProductDocument>("Product", productSchema);

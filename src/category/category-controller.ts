@@ -12,6 +12,7 @@ export class CategoryController {
     ) {
         this.create = this.create.bind(this);
         this.update = this.update.bind(this);
+        this.getOne = this.getOne.bind(this);
     }
 
     // Create category
@@ -83,6 +84,23 @@ export class CategoryController {
         res.json({
             message: "Updated Category",
             id: updateCategory?._id,
+        });
+    }
+
+    // Fetch one category data by ID
+    async getOne(req: Request, res: Response, next: NextFunction) {
+        const { categoryId } = req.params;
+
+        const category = await this.categoryService.getOne(categoryId);
+
+        if (!category) {
+            return next(createHttpError(404, "Category not found"));
+        }
+
+        this.logger.info(`Fetched Category data of ID: `, { id: category._id });
+
+        res.json({
+            category,
         });
     }
 }

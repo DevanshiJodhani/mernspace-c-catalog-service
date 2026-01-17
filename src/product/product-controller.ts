@@ -4,11 +4,12 @@ import { NextFunction, Response } from "express";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { ProductService } from "./product-service";
-import { Product } from "./product-types";
+import { Filter, Product } from "./product-types";
 import { FileStorage } from "../common/types/storage";
 import { UploadedFile } from "express-fileupload";
 import { AuthRequest } from "../common/types";
 import { Roles } from "../common/constants";
+import mongoose from "mongoose";
 
 export class ProductController {
     constructor(
@@ -64,6 +65,7 @@ export class ProductController {
         });
     };
 
+    // Update Product
     update = async (req: Request, res: Response, next: NextFunction) => {
         // Validation
         const result = validationResult(req);
@@ -137,5 +139,34 @@ export class ProductController {
             message: "Product updated successfully",
             id: productId,
         });
+    };
+
+    // Fetch all products data
+    getAll = async (req: Request, res: Response) => {
+        const { q, tenantId, categoryId, isPublish } = req.query;
+
+        const filters: Filter = {};
+
+        if (isPublish === "true") {
+            filters.isPublish = true;
+        }
+
+        if (tenantId) filters.tenantId = tenantId as string;
+
+        if (
+            categoryId &&
+            mongoose.Types.ObjectId.isValid(categoryId as string)
+        ) {
+            filters.categoryId = new mongoose.Types.ObjectId(
+                categoryId as string,
+            );
+        }
+
+        const products = await this.productService.getProducts(
+            q as string,
+            filters,
+        );
+
+        res.json(products);
     };
 }

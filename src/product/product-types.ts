@@ -21,3 +21,9 @@ export interface ProductDocument extends Document {
     categoryId: mongoose.Types.ObjectId;
     isPublish?: boolean;
 }
+
+export interface Filter {
+    tenantId?: string;
+    categoryId?: mongoose.Types.ObjectId;
+    isPublish?: boolean;
+}

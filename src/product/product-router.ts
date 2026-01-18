@@ -43,7 +43,7 @@ router.put(
     authenticate,
     canAccess([Roles.ADMIN, Roles.MANAGER]),
     fileUpload({
-        limits: { fileSize: 500 * 1024 }, // 500kb
+        limits: { fileSize: 500 * 1024 * 1024 }, // 500kb
         abortOnLimit: true,
         limitHandler: (req, res, next) => {
             const error = createHttpError(400, "File size exceeds the limit");

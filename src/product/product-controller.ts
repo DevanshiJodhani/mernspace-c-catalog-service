@@ -215,4 +215,41 @@ export class ProductController {
             image: this.storage.getObjectUri(product.image),
         });
     };
+
+    // Delete product
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        const { productId } = req.params;
+
+        const product = await this.productService.getProduct(productId);
+
+        if (!product) {
+            return next(createHttpError(400, "Product not found with this ID"));
+        }
+
+        if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
+            const tenant = (req as AuthRequest).auth.tenant;
+
+            if (product.tenantId !== String(tenant)) {
+                return next(
+                    createHttpError(
+                        403,
+                        "You are not allowed to delete this product",
+                    ),
+                );
+            }
+        }
+
+        // Delete image
+        await this.storage.delete(product.image);
+
+        // Delte product
+        await this.productService.deleteProduct(productId);
+
+        this.logger.info("Product deleted", { id: productId });
+
+        res.json({
+            message: "Product deleted successfully",
+            id: productId,
+        });
+    };
 }

@@ -23,19 +23,19 @@ router.post(
 );
 
 router.patch(
-    "/:id",
+    "/:categoryId",
     authenticate,
     canAccess([Roles.ADMIN]),
     categoryUpdateValidator,
     asyncWrapper(categoryController.update),
 );
 
-router.get("/:id", asyncWrapper(categoryController.getOne));
+router.get("/:categoryId", asyncWrapper(categoryController.getOne));
 
 router.get("/", asyncWrapper(categoryController.getAll));
 
 router.delete(
-    "/:id",
+    "/:categoryId",
     authenticate,
     canAccess([Roles.ADMIN]),
     asyncWrapper(categoryController.delete),

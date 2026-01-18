@@ -91,9 +91,9 @@ export class CategoryController {
 
     // Fetch one category data by ID
     async getOne(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
+        const { categoryId } = req.params;
 
-        const category = await this.categoryService.getOne(id);
+        const category = await this.categoryService.getOne(categoryId);
 
         if (!category) {
             return next(createHttpError(404, "Category not found"));
@@ -119,22 +119,22 @@ export class CategoryController {
 
     // Delete category
     async delete(req: Request, res: Response, next: NextFunction) {
-        const { id } = req.params;
+        const { categoryId } = req.params;
 
         // Check if category exists
-        const existingCategory = await this.categoryService.getOne(id);
+        const existingCategory = await this.categoryService.getOne(categoryId);
 
         if (!existingCategory) {
             return next(createHttpError(404, "Category with this IDnot found"));
         }
 
-        await this.categoryService.delete(id);
+        await this.categoryService.delete(categoryId);
 
-        this.logger.info(`Deleted category`, { id });
+        this.logger.info(`Deleted category`, { id: categoryId });
 
         res.json({
             message: "Category deleted successfully",
-            id,
+            id: categoryId,
         });
     }
 }

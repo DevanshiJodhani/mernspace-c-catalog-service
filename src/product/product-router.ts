@@ -56,4 +56,6 @@ router.put(
 
 router.get("/", asyncWrapper(productController.getAll));
 
+router.get("/:productId", asyncWrapper(productController.getOne));
+
 export default router;

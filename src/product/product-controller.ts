@@ -197,4 +197,22 @@ export class ProductController {
             currentPage: products.page,
         });
     };
+
+    // Fetch only one products data
+    getOne = async (req: Request, res: Response, next: NextFunction) => {
+        const { productId } = req.params;
+
+        const product = await this.productService.getProduct(productId);
+
+        if (!product) {
+            return next(createHttpError(404, "Product not found with this ID"));
+        }
+
+        this.logger.info(`Fetched Product data`, { id: productId });
+
+        res.json({
+            ...product,
+            image: this.storage.getObjectUri(product.image),
+        });
+    };
 }

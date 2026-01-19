@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UploadedFile } from "express-fileupload";
 import { FileStorage } from "../common/types/storage";
 import { ToppingService } from "./topping-service";
-import { CreataeRequestBody, Topping } from "./topping-types";
+import { CreataeRequestBody, Filter, Topping } from "./topping-types";
 import { Logger } from "winston";
 import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
@@ -97,12 +97,13 @@ export class ToppingController {
             await this.storage.delete(oldImage);
         }
 
-        const { name, price, tenantId } = req.body;
+        const { name, price, tenantId, isPublish } = req.body;
 
         const toppingToUpdate = {
             name,
             price,
             tenantId,
+            isPublish,
             image: imageName ? imageName : (oldImage as string),
         };
 
@@ -131,6 +132,48 @@ export class ToppingController {
         res.json({
             ...topping,
             image: this.storage.getObjectUri(topping.image),
+        });
+    };
+
+    // Get all topping data
+    getAll = async (req: Request, res: Response) => {
+        const { q, tenantId, isPublish } = req.query;
+
+        const filters: Filter = {};
+
+        if (isPublish === "true") {
+            filters.isPublish = true;
+        }
+
+        if (tenantId) filters.tenantId = tenantId as string;
+
+        const toppings = await this.toppingService.getAllToppings(
+            q as string,
+            filters,
+            {
+                page: req.query.page ? parseInt(req.query.page as string) : 1,
+                limit: req.query.limit
+                    ? parseInt(req.query.limit as string)
+                    : 10,
+            },
+        );
+
+        this.logger.info("Fetched toppings list");
+
+        const finalTopping = (toppings.data as Topping[]).map(
+            (topping: Topping) => {
+                return {
+                    ...topping,
+                    image: this.storage.getObjectUri(topping.image),
+                };
+            },
+        );
+
+        res.json({
+            data: finalTopping,
+            total: toppings.total,
+            pageSize: toppings.limit,
+            currentPage: toppings.page,
         });
     };
 }

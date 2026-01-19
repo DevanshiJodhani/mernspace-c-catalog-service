@@ -1,5 +1,6 @@
+import { paginationLabels } from "../config/pagination";
 import toppingModel from "./topping-model";
-import { Topping } from "./topping-types";
+import { Filter, PaginateQuery, Topping } from "./topping-types";
 
 export class ToppingService {
     // Create topping
@@ -19,5 +20,30 @@ export class ToppingService {
             { $set: topping },
             { new: true },
         )) as Topping;
+    }
+
+    // Fetch topping list
+    async getAllToppings(
+        q: string,
+        filters: Filter,
+        paginateQuery: PaginateQuery,
+    ) {
+        const searchQueryRegexp = new RegExp(q, "i");
+
+        const matchQuery = {
+            ...filters,
+            name: searchQueryRegexp,
+        };
+
+        const aggregate = toppingModel.aggregate([
+            {
+                $match: matchQuery,
+            },
+        ]);
+
+        return toppingModel.aggregatePaginate(aggregate, {
+            ...paginateQuery,
+            customLabels: paginationLabels,
+        });
     }
 }

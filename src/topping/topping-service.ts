@@ -46,4 +46,9 @@ export class ToppingService {
             customLabels: paginationLabels,
         });
     }
+
+    // Delete topping
+    async deleteTopping(toppingId: string) {
+        return await toppingModel.findByIdAndDelete(toppingId);
+    }
 }

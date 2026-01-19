@@ -176,4 +176,41 @@ export class ToppingController {
             currentPage: toppings.page,
         });
     };
+
+    // Delete topping
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        const { toppingId } = req.params;
+
+        const topping = await this.toppingService.getOneTopping(toppingId);
+
+        if (!topping) {
+            return next(createHttpError(400, "Topping not found"));
+        }
+
+        if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
+            const tenant = (req as AuthRequest).auth.tenant;
+
+            if (topping.tenantId !== String(tenant)) {
+                return next(
+                    createHttpError(
+                        403,
+                        "You are not allowed to delete this topping",
+                    ),
+                );
+            }
+        }
+
+        // Delete image
+        await this.storage.delete(topping.image);
+
+        // Delete topping
+        await this.toppingService.deleteTopping(toppingId);
+
+        this.logger.info("Topping deleted", { id: toppingId });
+
+        res.json({
+            message: "Topping deleted successfully",
+            id: toppingId,
+        });
+    };
 }

@@ -62,7 +62,7 @@ export class ToppingController {
 
         const { toppingId } = req.params;
 
-        const topping = await this.toppingService.getOne(toppingId);
+        const topping = await this.toppingService.getOneTopping(toppingId);
 
         if (!topping) {
             return next(createHttpError(404, "Topping not found with this ID"));
@@ -113,6 +113,24 @@ export class ToppingController {
         res.json({
             message: "Topping updated successfully",
             id: toppingId,
+        });
+    };
+
+    // Get only one topping data
+    getOne = async (req: Request, res: Response, next: NextFunction) => {
+        const { toppingId } = req.params;
+
+        const topping = await this.toppingService.getOneTopping(toppingId);
+
+        if (!topping) {
+            return next(createHttpError(400, "Topping not found"));
+        }
+
+        this.logger.info("Fetch one topping data", { id: toppingId });
+
+        res.json({
+            ...topping,
+            image: this.storage.getObjectUri(topping.image),
         });
     };
 }

@@ -8,7 +8,7 @@ export class ToppingService {
     }
 
     // Get one topping data
-    async getOne(toppingId: string) {
+    async getOneTopping(toppingId: string) {
         return await toppingModel.findById(toppingId);
     }
 

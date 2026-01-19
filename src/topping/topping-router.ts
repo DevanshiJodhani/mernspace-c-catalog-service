@@ -54,4 +54,6 @@ router.put(
     asyncWrapper(toppingController.update),
 );
 
+router.get("/:toppingId", asyncWrapper(toppingController.getOne));
+
 export default router;

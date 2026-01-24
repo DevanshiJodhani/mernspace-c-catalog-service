@@ -27,7 +27,7 @@ const attributeSchema = new mongoose.Schema<Attribute>({
         type: mongoose.Schema.Types.Mixed,
         required: true,
     },
-    availableOptopns: {
+    availableOptions: {
         type: [String],
         required: true,
     },

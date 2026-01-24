@@ -9,7 +9,7 @@ export interface Attribute {
     name: string;
     widgetType: "switch" | "radio";
     defaultValue: string;
-    availableOptopns: string[];
+    availableOptions: string[];
 }
 
 export interface Category {

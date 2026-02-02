@@ -9,9 +9,13 @@ import toppingRouter from "./topping/topping-router";
 
 const app = express();
 
+const ALLOWED_DOMAINS = [
+    config.get("frontend.adminUI"),
+    config.get("frontend.clientUI"),
+];
 app.use(
     cors({
-        origin: config.get("frontend.adminUI"),
+        origin: ALLOWED_DOMAINS as string[],
         credentials: true,
     }),
 );

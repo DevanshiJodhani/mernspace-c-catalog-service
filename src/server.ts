@@ -2,8 +2,8 @@ import config from "config";
 import app from "./app";
 import logger from "./config/logger";
 import { initDb } from "./config/db";
-import { KafkaProducerBroker } from "./config/kafka";
 import { MessageProducerBroker } from "./common/types/broker";
+import { createMessageProducerBroker } from "./common/factories/brokerFactory";
 
 const startServer = async () => {
     const PORT: number = config.get("server.port") || 5502;
@@ -13,9 +13,7 @@ const startServer = async () => {
         logger.info("Database connected successfully.");
 
         // connect to kafka
-        messageProducerBroker = new KafkaProducerBroker("clatalog-service", [
-            config.get("kafka.broker"),
-        ]);
+        messageProducerBroker = createMessageProducerBroker();
 
         await messageProducerBroker.connect();
 

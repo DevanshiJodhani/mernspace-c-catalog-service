@@ -9,12 +9,14 @@ import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { AuthRequest } from "../common/types";
 import { Roles } from "../common/constants";
+import { MessageProducerBroker } from "../common/types/broker";
 
 export class ToppingController {
     constructor(
         private toppingService: ToppingService,
         private storage: FileStorage,
         private logger: Logger,
+        private broker: MessageProducerBroker,
     ) {}
 
     // Create Topping
@@ -45,6 +47,15 @@ export class ToppingController {
         } as Topping);
 
         this.logger.info(`Topping created`, { id: savedTopping._id });
+
+        await this.broker.sendMessage(
+            "topping",
+            JSON.stringify({
+                id: savedTopping._id,
+                price: savedTopping.price,
+                tenantId: savedTopping.tenantId,
+            }),
+        );
 
         res.json({
             id: savedTopping._id,
@@ -107,9 +118,21 @@ export class ToppingController {
             image: imageName ? imageName : (oldImage as string),
         };
 
-        await this.toppingService.updateTopping(toppingId, toppingToUpdate);
+        const updatedTopping = await this.toppingService.updateTopping(
+            toppingId,
+            toppingToUpdate,
+        );
 
         this.logger.info("Topping updated", { id: toppingId });
+
+        await this.broker.sendMessage(
+            "topping",
+            JSON.stringify({
+                id: updatedTopping._id,
+                price: updatedTopping.price,
+                tenantId: updatedTopping.tenantId,
+            }),
+        );
 
         res.json({
             message: "Topping updated successfully",

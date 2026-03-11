@@ -51,9 +51,12 @@ export class ToppingController {
         await this.broker.sendMessage(
             "topping",
             JSON.stringify({
-                id: savedTopping._id,
-                price: savedTopping.price,
-                tenantId: savedTopping.tenantId,
+                event_type: "TOPPING_CREATE",
+                data: {
+                    id: savedTopping._id,
+                    price: savedTopping.price,
+                    tenantId: savedTopping.tenantId,
+                },
             }),
         );
 
@@ -128,9 +131,12 @@ export class ToppingController {
         await this.broker.sendMessage(
             "topping",
             JSON.stringify({
-                id: updatedTopping._id,
-                price: updatedTopping.price,
-                tenantId: updatedTopping.tenantId,
+                event_type: "TOPPING_UPDATE",
+                data: {
+                    id: updatedTopping._id,
+                    price: updatedTopping.price,
+                    tenantId: updatedTopping.tenantId,
+                },
             }),
         );
 

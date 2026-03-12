@@ -27,6 +27,11 @@ app.get("/", (req: Request, res: Response) => {
     res.send({ message: "Hello from catalog service" });
 });
 
+// Health check route
+app.get("/health", (req, res) => {
+    res.status(200).send("Catalog service running perfectly");
+});
+
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/toppings", toppingRouter);
